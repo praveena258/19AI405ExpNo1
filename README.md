@@ -40,3 +40,64 @@
 <p>Treat unhealthy patients in each room. And check for the unhealthy patients in random room</p>
 <h3>STEP 5:</h3>
 <p>Measure the performance parameters: For each treatment performance incremented, for each movement performance decremented</p>
+
+ <h3>program</h3>
+ 
+```
+python
+import random
+
+# Define the environment: 2 rooms with patients
+rooms = {
+    "Room 1": {"temperature": random.uniform(97, 102), "treated": False},
+    "Room 2": {"temperature": random.uniform(97, 102), "treated": False}
+}
+
+# Agent performance
+performance = 0
+
+# Medicine prescribing agent
+class MedicineAgent:
+    def __init__(self):
+        self.current_room = "Room 1"
+
+    # Sensor: check patient's temperature
+    def check_patient(self, room):
+        temp = rooms[room]["temperature"]
+        print(f"{room} patient temperature: {temp:.2f}")
+        return temp
+
+    # Actuator: prescribe medicine if patient is unhealthy
+    def treat_patient(self, room):
+        global performance
+        if rooms[room]["temperature"] > 98.5 and not rooms[room]["treated"]:
+            print(f"Treating patient in {room}...")
+            rooms[room]["treated"] = True
+            performance += 10  # increase performance for treating
+        else:
+            print(f"No treatment needed in {room}.")
+
+    # Move agent to another room
+    def move_to(self, room):
+        global performance
+        if self.current_room != room:
+            print(f"Moving from {self.current_room} to {room}...")
+            self.current_room = room
+            performance -= 1  # movement reduces performance
+
+agent = MedicineAgent()
+
+# Agent performs actions in both rooms
+for room in rooms:
+    temp = agent.check_patient(room)
+    agent.treat_patient(room)
+    if room == "Room 1":
+        agent.move_to("Room 2")  # move to next room
+
+print("\nFinal Performance:", performance)
+print("Room Status:", rooms)
+
+```
+<h3>OUTPUT</h3>
+<img width="1469" height="340" alt="image" src="https://github.com/user-attachments/assets/1cc72988-e960-4218-a943-863cd1329cbc" />
+
